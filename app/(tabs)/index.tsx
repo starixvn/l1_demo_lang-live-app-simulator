@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { WebView } from "react-native-webview";
 
@@ -67,12 +67,8 @@ export default function App() {
     <WebView
       style={styles.webView}
       source={{ uri: gameUrl }}
-      originWhitelist={["*"]}
-      allowsInlineMediaPlayback={true}
-      mediaPlaybackRequiresUserAction={false}
-      allowsFullscreenVideo={true}
-      allowsBackForwardNavigationGestures={false}
-      onMessage={handleWebViewMessage}
+      // Prevent open new tab in android
+      setSupportMultipleWindows={false}
     />
   );
 
@@ -118,7 +114,7 @@ const styles = StyleSheet.create({
   },
   openButtonContainer: {
     position: "absolute",
-    bottom: 12,
+    bottom: 30,
     right: 16,
   },
   openButton: {
