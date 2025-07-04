@@ -57,7 +57,6 @@ export default function App() {
     }
   };
 
-  // Render Components
   const renderCloseButton = () => (
     <TouchableOpacity
       onPress={handleCloseWebView}
@@ -90,21 +89,7 @@ export default function App() {
     </TouchableOpacity>
   );
 
-  const renderMaximizeButton = () => (
-    <TouchableOpacity
-      onPress={handleMaximizeWebView}
-      style={styles.maximizeButtonWrapper}
-    >
-      <LinearGradient
-        colors={["#10b981", "#059669"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.floatingMaximizeButton}
-      >
-        <Text style={styles.maximizeButtonText}>□</Text>
-      </LinearGradient>
-    </TouchableOpacity>
-  );
+
 
   const renderWebView = () => (
     <WebView
@@ -147,15 +132,14 @@ export default function App() {
           style={styles.container}
           resizeMode="cover"
         >
-          <View style={styles.openButtonContainer}>
-            {renderOpenButton()}
-          </View>
-          <View style={styles.minimizedContainer}>
+          <TouchableOpacity 
+            style={styles.minimizedContainer}
+            onPress={handleMaximizeWebView}
+          >
             <View style={styles.minimizedWebView}>
-              {renderMaximizeButton()}
               {renderWebView()}
             </View>
-          </View>
+          </TouchableOpacity>
         </ImageBackground>
       </SafeAreaView>
     );
@@ -266,42 +250,15 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 2,
   },
-  maximizeButtonWrapper: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    zIndex: 3,
-    width: 28,
-    height: 28,
-    borderRadius: 16,
-    shadowColor: "#10b981",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 8,
-  },
-  floatingMaximizeButton: {
-    flex: 1,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  maximizeButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
-    textShadowColor: "rgba(255, 255, 255, 0.5)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
-  },
+
   webView: {
     width: "100%",
     height: "100%",
     backgroundColor: "transparent",
   },
   minimizedWebView: {
-    width: 200,
-    height: 150,
+    width: 120,
+    height: 80,
     backgroundColor: "transparent",
     borderRadius: 12,
     overflow: "hidden",
