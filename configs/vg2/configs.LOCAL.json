@@ -1,0 +1,9 @@
+{
+  "env": "LOCAL",
+  "baseUrl": "http://l2-langlive-simulator.lumigame.com",
+  "port": 5000,
+  "simulatorUrl": "http://l2-game-lobby-simulator-LOCAL-service:5000",
+  "owApiUrl": "http://l2-ow-api-simulator-LOCAL-service:5000/SabaClub",
+  "operatorId": "ONEworksVGCash",
+  "operatorSecret": "VG@SC123"
+}

@@ -1,0 +1,180 @@
+import configs from "@/configs";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
+import {
+  Dimensions,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { WebView } from "react-native-webview";
+
+const { width, height } = Dimensions.get("window");
+const WEBVIEW_RESOLUTION = { width: 930, height: 786 };
+const webViewHeight = width / (WEBVIEW_RESOLUTION.width / WEBVIEW_RESOLUTION.height);
+
+interface WebViewMessageEvent {
+  nativeEvent: {
+    data: string;
+  };
+}
+
+export default function App() {
+  const [isWebViewVisible, setIsWebViewVisible] = useState(false);
+  const [gameUrl, setGameUrl] = useState("");
+
+  const handleOpen = () => {
+    setGameUrl(configs.simulatorUrl);
+    setIsWebViewVisible(true);
+  };
+
+  const handleCloseWebView = () => {
+    setIsWebViewVisible(false);
+    setGameUrl("");
+  };
+
+  const handleWebViewMessage = (event: WebViewMessageEvent) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data?.type === "CLOSE_IFRAME") {
+        setIsWebViewVisible(false);
+      }
+    } catch (error) {
+      console.log("WebView message:", event.nativeEvent.data, "Error: ", error);
+    }
+  };
+
+  // Render Components
+  const renderCloseButton = () => (
+    <TouchableOpacity
+      onPress={handleCloseWebView}
+      style={styles.closeButtonWrapper}
+    >
+      <LinearGradient
+        colors={["#ef4444", "#facc15"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.floatingCloseButton}
+      >
+        <Text style={styles.closeButtonText}>✕</Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
+  const renderWebView = () => (
+    <WebView
+      style={styles.webView}
+      source={{ uri: gameUrl }}
+      originWhitelist={["*"]}
+      allowsInlineMediaPlayback={true}
+      mediaPlaybackRequiresUserAction={false}
+      allowsFullscreenVideo={true}
+      allowsBackForwardNavigationGestures={false}
+      onMessage={handleWebViewMessage}
+    />
+  );
+
+  const renderOpenButton = () => (
+    <TouchableOpacity style={styles.openButton} onPress={handleOpen}>
+      <Text style={styles.buttonText}>Open Demo</Text>
+    </TouchableOpacity>
+  );
+
+  if (isWebViewVisible) {
+    return (
+      <ImageBackground
+        source={require("../../assets/images/lang-live-demo-bg.webp")}
+        style={styles.container}
+        resizeMode="cover"
+      >
+        <View style={styles.overlayContainer}>
+          {renderCloseButton()}
+          {renderWebView()}
+        </View>
+      </ImageBackground>
+    );
+  }
+
+  return (
+    <ImageBackground
+      source={require("../../assets/images/lang-live-demo-bg.webp")}
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <View style={styles.openButtonContainer}>
+        {renderOpenButton()}
+      </View>
+    </ImageBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: width,
+    height: "100%",
+  },
+  openButtonContainer: {
+    position: "absolute",
+    bottom: 12,
+    right: 16,
+  },
+  openButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "rgba(34,197,94,0.5)",
+    borderRadius: 9999,
+    backdropFilter: "blur(4px)",
+    zIndex: 10,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  hiddenButton: {
+    opacity: 0,
+    pointerEvents: "none",
+  },
+  overlayContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: webViewHeight,
+  },
+  closeButtonWrapper: {
+    position: "absolute",
+    top: -35,
+    left: 16,
+    zIndex: 2,
+    width: 34,
+    height: 34,
+    borderRadius: 20,
+    shadowColor: "#f87171",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
+  },
+  floatingCloseButton: {
+    flex: 1,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textShadowColor: "rgba(255, 255, 255, 0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+  },
+  webView: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "transparent",
+  },
+});
