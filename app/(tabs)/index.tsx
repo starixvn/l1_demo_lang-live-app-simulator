@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {
   Dimensions,
   ImageBackground,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -80,29 +81,33 @@ export default function App() {
 
   if (isWebViewVisible) {
     return (
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          source={require("../../assets/images/lang-live-demo-bg.webp")}
+          style={styles.container}
+          resizeMode="cover"
+        >
+          <View style={styles.overlayContainer}>
+            {renderCloseButton()}
+            {renderWebView()}
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
       <ImageBackground
         source={require("../../assets/images/lang-live-demo-bg.webp")}
         style={styles.container}
         resizeMode="cover"
       >
-        <View style={styles.overlayContainer}>
-          {renderCloseButton()}
-          {renderWebView()}
+        <View style={styles.openButtonContainer}>
+          {renderOpenButton()}
         </View>
       </ImageBackground>
-    );
-  }
-
-  return (
-    <ImageBackground
-      source={require("../../assets/images/lang-live-demo-bg.webp")}
-      style={styles.container}
-      resizeMode="cover"
-    >
-      <View style={styles.openButtonContainer}>
-        {renderOpenButton()}
-      </View>
-    </ImageBackground>
+    </SafeAreaView>
   );
 }
 
