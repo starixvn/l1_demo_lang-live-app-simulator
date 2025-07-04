@@ -24,6 +24,7 @@ interface WebViewMessageEvent {
 
 export default function App() {
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [gameUrl, setGameUrl] = useState("");
 
   const handleOpen = () => {
@@ -33,7 +34,16 @@ export default function App() {
 
   const handleCloseWebView = () => {
     setIsWebViewVisible(false);
+    setIsMinimized(false);
     setGameUrl("");
+  };
+
+  const handleMinimizeWebView = () => {
+    setIsMinimized(true);
+  };
+
+  const handleMaximizeWebView = () => {
+    setIsMinimized(false);
   };
 
   const handleWebViewMessage = (event: WebViewMessageEvent) => {
@@ -64,6 +74,38 @@ export default function App() {
     </TouchableOpacity>
   );
 
+  const renderMinimizeButton = () => (
+    <TouchableOpacity
+      onPress={handleMinimizeWebView}
+      style={styles.minimizeButtonWrapper}
+    >
+      <LinearGradient
+        colors={["#3b82f6", "#8b5cf6"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.floatingMinimizeButton}
+      >
+        <Text style={styles.minimizeButtonText}>−</Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
+  const renderMaximizeButton = () => (
+    <TouchableOpacity
+      onPress={handleMaximizeWebView}
+      style={styles.maximizeButtonWrapper}
+    >
+      <LinearGradient
+        colors={["#10b981", "#059669"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.floatingMaximizeButton}
+      >
+        <Text style={styles.maximizeButtonText}>□</Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
   const renderWebView = () => (
     <WebView
       style={styles.webView}
@@ -79,7 +121,7 @@ export default function App() {
     </TouchableOpacity>
   );
 
-  if (isWebViewVisible) {
+  if (isWebViewVisible && !isMinimized) {
     return (
       <SafeAreaView style={styles.container}>
         <ImageBackground
@@ -89,7 +131,30 @@ export default function App() {
         >
           <View style={styles.overlayContainer}>
             {renderCloseButton()}
+            {renderMinimizeButton()}
             {renderWebView()}
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
+    );
+  }
+
+  if (isWebViewVisible && isMinimized) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          source={require("../../assets/images/lang-live-demo-bg.webp")}
+          style={styles.container}
+          resizeMode="cover"
+        >
+          <View style={styles.openButtonContainer}>
+            {renderOpenButton()}
+          </View>
+          <View style={styles.minimizedContainer}>
+            <View style={styles.minimizedWebView}>
+              {renderMaximizeButton()}
+              {renderWebView()}
+            </View>
           </View>
         </ImageBackground>
       </SafeAreaView>
@@ -173,9 +238,78 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 2,
   },
+  minimizeButtonWrapper: {
+    position: "absolute",
+    top: -35,
+    right: 16,
+    zIndex: 2,
+    width: 34,
+    height: 34,
+    borderRadius: 20,
+    shadowColor: "#3b82f6",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
+  },
+  floatingMinimizeButton: {
+    flex: 1,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  minimizeButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textShadowColor: "rgba(255, 255, 255, 0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+  },
+  maximizeButtonWrapper: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 3,
+    width: 28,
+    height: 28,
+    borderRadius: 16,
+    shadowColor: "#10b981",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 8,
+  },
+  floatingMaximizeButton: {
+    flex: 1,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  maximizeButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+    textShadowColor: "rgba(255, 255, 255, 0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+  },
   webView: {
     width: "100%",
     height: "100%",
     backgroundColor: "transparent",
+  },
+  minimizedWebView: {
+    width: 200,
+    height: 150,
+    backgroundColor: "transparent",
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  minimizedContainer: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    zIndex: 1000,
   },
 });
