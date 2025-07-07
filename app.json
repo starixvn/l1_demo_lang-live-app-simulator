@@ -17,7 +17,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.zephyrnguyen1512.langliveapp"
+      "package": "com.zephyrnguyen1512.langliveapp",
+      "softwareKeyboardLayoutMode": "pan",
+      "windowTranslucentNavigation": true,
+      "windowTranslucentStatus": true
     },
     "web": {
       "bundler": "metro",

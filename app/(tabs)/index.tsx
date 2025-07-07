@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import {
   Dimensions,
   ImageBackground,
-  SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -89,8 +89,6 @@ export default function App() {
     </TouchableOpacity>
   );
 
-
-
   const renderWebView = () => (
     <WebView
       style={styles.webView}
@@ -108,7 +106,12 @@ export default function App() {
 
   if (isWebViewVisible && !isMinimized) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent={true}
+        />
         <ImageBackground
           source={require("../../assets/images/lang-live-demo-bg.webp")}
           style={styles.container}
@@ -120,13 +123,18 @@ export default function App() {
             {renderWebView()}
           </View>
         </ImageBackground>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (isWebViewVisible && isMinimized) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent={true}
+        />
         <ImageBackground
           source={require("../../assets/images/lang-live-demo-bg.webp")}
           style={styles.container}
@@ -141,12 +149,17 @@ export default function App() {
             </View>
           </TouchableOpacity>
         </ImageBackground>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <ImageBackground
         source={require("../../assets/images/lang-live-demo-bg.webp")}
         style={styles.container}
@@ -156,7 +169,7 @@ export default function App() {
           {renderOpenButton()}
         </View>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 }
 
