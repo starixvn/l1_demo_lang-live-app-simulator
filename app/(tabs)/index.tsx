@@ -1,9 +1,13 @@
 import configs from "@/configs";
+import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import * as SystemUI from 'expo-system-ui';
+import React, { useEffect, useState } from "react";
 import {
+  AppState,
   Dimensions,
   ImageBackground,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -27,7 +31,45 @@ export default function App() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [gameUrl, setGameUrl] = useState("");
 
-  const handleOpen = () => {
+  useEffect(() => {
+    const hideNavigationBar = async () => {
+      if (Platform.OS === 'android') {
+        StatusBar.setHidden(false);
+        StatusBar.setBarStyle('light-content');
+        StatusBar.setTranslucent(true);
+        
+        await SystemUI.setBackgroundColorAsync('transparent');
+      }
+    };
+
+    hideNavigationBar();
+    
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        hideNavigationBar();
+      }
+    });
+
+    return () => {
+      subscription?.remove();
+    };
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const hideNavBar = async () => {
+        if (Platform.OS === 'android') {
+          StatusBar.setHidden(false);
+          StatusBar.setBarStyle('light-content');
+          StatusBar.setTranslucent(true);
+          await SystemUI.setBackgroundColorAsync('transparent');
+        }
+      };
+      hideNavBar();
+    }, [])
+  );
+
+  const handleOpenWebView = () => {
     setGameUrl(configs.simulatorUrl);
     setIsWebViewVisible(true);
   };
@@ -99,7 +141,7 @@ export default function App() {
   );
 
   const renderOpenButton = () => (
-    <TouchableOpacity style={styles.openButton} onPress={handleOpen}>
+    <TouchableOpacity style={styles.openButton} onPress={handleOpenWebView}>
       <Text style={styles.buttonText}>Open Demo</Text>
     </TouchableOpacity>
   );

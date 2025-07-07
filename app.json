@@ -19,7 +19,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.zephyrnguyen1512.langliveapp",
       "softwareKeyboardLayoutMode": "pan",
-      "windowTranslucentNavigation": true,
+      "navigationBarHidden": true,
       "windowTranslucentStatus": true
     },
     "web": {
