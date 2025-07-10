@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 
+import TopUpDialog from "../../components/TopUpDialog";
+
 const { width, height } = Dimensions.get("window");
 const WEBVIEW_RESOLUTION = { width: 930, height: 786 };
 const webViewHeight = width / (WEBVIEW_RESOLUTION.width / WEBVIEW_RESOLUTION.height);
@@ -30,6 +32,7 @@ export default function App() {
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [gameUrl, setGameUrl] = useState("");
+  const [isTopUpDialogVisible, setIsTopUpDialogVisible] = useState(false);
 
   useEffect(() => {
     const hideNavigationBar = async () => {
@@ -91,12 +94,20 @@ export default function App() {
   const handleWebViewMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
-      if (data?.type === "CLOSE_IFRAME") {
-        setIsWebViewVisible(false);
+      if (data?.type === "OPEN_TOPUP_BALANCE") {
+        setIsTopUpDialogVisible(true);
       }
     } catch (error) {
       console.log("WebView message:", event.nativeEvent.data, "Error: ", error);
     }
+  };
+
+  const handleTopUp = () => {
+    setIsTopUpDialogVisible(false);
+  };
+
+  const handleCloseTopUpDialog = () => {
+    setIsTopUpDialogVisible(false);
   };
 
   const renderCloseButton = () => (
@@ -137,6 +148,7 @@ export default function App() {
       source={{ uri: gameUrl }}
       // Prevent open new tab in android
       setSupportMultipleWindows={false}
+      onMessage={handleWebViewMessage}
     />
   );
 
@@ -165,6 +177,12 @@ export default function App() {
             {renderWebView()}
           </View>
         </ImageBackground>
+        
+        <TopUpDialog
+          visible={isTopUpDialogVisible}
+          onClose={handleCloseTopUpDialog}
+          onTopUp={handleTopUp}
+        />
       </View>
     );
   }
@@ -191,6 +209,12 @@ export default function App() {
             </View>
           </TouchableOpacity>
         </ImageBackground>
+        
+        <TopUpDialog
+          visible={isTopUpDialogVisible}
+          onClose={handleCloseTopUpDialog}
+          onTopUp={handleTopUp}
+        />
       </View>
     );
   }
@@ -211,6 +235,12 @@ export default function App() {
           {renderOpenButton()}
         </View>
       </ImageBackground>
+      
+      <TopUpDialog
+        visible={isTopUpDialogVisible}
+        onClose={handleCloseTopUpDialog}
+        onTopUp={handleTopUp}
+      />
     </View>
   );
 }
