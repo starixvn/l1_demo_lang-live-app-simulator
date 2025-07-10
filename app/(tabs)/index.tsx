@@ -1,7 +1,7 @@
 import configs from "@/configs";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import * as SystemUI from 'expo-system-ui';
+import * as SystemUI from "expo-system-ui";
 import React, { useEffect, useState } from "react";
 import {
   AppState,
@@ -12,15 +12,17 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { WebView } from "react-native-webview";
 
+import GameLoadedDialog from "../../components/GameLoadedDialog";
 import TopUpDialog from "../../components/TopUpDialog";
 
 const { width, height } = Dimensions.get("window");
 const WEBVIEW_RESOLUTION = { width: 930, height: 786 };
-const webViewHeight = width / (WEBVIEW_RESOLUTION.width / WEBVIEW_RESOLUTION.height);
+const webViewHeight =
+  width / (WEBVIEW_RESOLUTION.width / WEBVIEW_RESOLUTION.height);
 
 interface WebViewMessageEvent {
   nativeEvent: {
@@ -33,22 +35,23 @@ export default function App() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [gameUrl, setGameUrl] = useState("");
   const [isTopUpDialogVisible, setIsTopUpDialogVisible] = useState(false);
+  const [isGameLoadedDialogVisible, setIsGameLoadedDialogVisible] = useState(false);
 
   useEffect(() => {
     const hideNavigationBar = async () => {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         StatusBar.setHidden(false);
-        StatusBar.setBarStyle('light-content');
+        StatusBar.setBarStyle("light-content");
         StatusBar.setTranslucent(true);
-        
-        await SystemUI.setBackgroundColorAsync('transparent');
+
+        await SystemUI.setBackgroundColorAsync("transparent");
       }
     };
 
     hideNavigationBar();
-    
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState === 'active') {
+
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
         hideNavigationBar();
       }
     });
@@ -61,11 +64,11 @@ export default function App() {
   useFocusEffect(
     React.useCallback(() => {
       const hideNavBar = async () => {
-        if (Platform.OS === 'android') {
+        if (Platform.OS === "android") {
           StatusBar.setHidden(false);
-          StatusBar.setBarStyle('light-content');
+          StatusBar.setBarStyle("light-content");
           StatusBar.setTranslucent(true);
-          await SystemUI.setBackgroundColorAsync('transparent');
+          await SystemUI.setBackgroundColorAsync("transparent");
         }
       };
       hideNavBar();
@@ -94,8 +97,16 @@ export default function App() {
   const handleWebViewMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
-      if (data?.type === "OPEN_TOPUP_BALANCE") {
-        setIsTopUpDialogVisible(true);
+
+      switch (data?.type) {
+        case "openRechargePanel":
+          setIsTopUpDialogVisible(true);
+          break;
+        case "onGameLoaded":
+          setIsGameLoadedDialogVisible(true);
+          break;
+        default:
+          break;
       }
     } catch (error) {
       console.log("WebView message:", event.nativeEvent.data, "Error: ", error);
@@ -108,6 +119,10 @@ export default function App() {
 
   const handleCloseTopUpDialog = () => {
     setIsTopUpDialogVisible(false);
+  };
+
+  const handleCloseGameLoadedDialog = () => {
+    setIsGameLoadedDialogVisible(false);
   };
 
   const renderCloseButton = () => (
@@ -177,11 +192,15 @@ export default function App() {
             {renderWebView()}
           </View>
         </ImageBackground>
-        
+
         <TopUpDialog
           visible={isTopUpDialogVisible}
           onClose={handleCloseTopUpDialog}
           onTopUp={handleTopUp}
+        />
+        <GameLoadedDialog
+          visible={isGameLoadedDialogVisible}
+          onClose={handleCloseGameLoadedDialog}
         />
       </View>
     );
@@ -200,20 +219,22 @@ export default function App() {
           style={styles.container}
           resizeMode="cover"
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.minimizedContainer}
             onPress={handleMaximizeWebView}
           >
-            <View style={styles.minimizedWebView}>
-              {renderWebView()}
-            </View>
+            <View style={styles.minimizedWebView}>{renderWebView()}</View>
           </TouchableOpacity>
         </ImageBackground>
-        
+
         <TopUpDialog
           visible={isTopUpDialogVisible}
           onClose={handleCloseTopUpDialog}
           onTopUp={handleTopUp}
+        />
+        <GameLoadedDialog
+          visible={isGameLoadedDialogVisible}
+          onClose={handleCloseGameLoadedDialog}
         />
       </View>
     );
@@ -231,15 +252,17 @@ export default function App() {
         style={styles.container}
         resizeMode="cover"
       >
-        <View style={styles.openButtonContainer}>
-          {renderOpenButton()}
-        </View>
+        <View style={styles.openButtonContainer}>{renderOpenButton()}</View>
       </ImageBackground>
-      
+
       <TopUpDialog
         visible={isTopUpDialogVisible}
         onClose={handleCloseTopUpDialog}
         onTopUp={handleTopUp}
+      />
+      <GameLoadedDialog
+        visible={isGameLoadedDialogVisible}
+        onClose={handleCloseGameLoadedDialog}
       />
     </View>
   );
