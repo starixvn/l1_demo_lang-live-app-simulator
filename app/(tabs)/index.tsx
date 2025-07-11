@@ -16,14 +16,14 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 
+import { ASPECT_RATIO, WEBVIEW_MESSAGE_TYPES } from "@/constants/constants";
 import GameLoadedDialog from "../../components/GameLoadedDialog";
 import TopUpDialog from "../../components/TopUpDialog";
 
 const { width, height } = Dimensions.get("window");
-// Calculate WebView height based on aspect ratio
+
 const calculateWebViewHeight = () => {
-  const aspectRatio = 386 / 852;
-  return height * aspectRatio;
+  return height * ASPECT_RATIO;
 };
 
 const webViewHeight = calculateWebViewHeight();
@@ -104,11 +104,14 @@ export default function App() {
       const data = JSON.parse(event.nativeEvent.data);
 
       switch (data?.type) {
-        case "openRechargePanel":
+        case WEBVIEW_MESSAGE_TYPES.OPEN_RECHARGE_PANEL:
           setIsTopUpDialogVisible(true);
           break;
-        case "onGameLoaded":
+        case WEBVIEW_MESSAGE_TYPES.GAME_LOADED:
           setIsGameLoadedDialogVisible(true);
+          break;
+        case WEBVIEW_MESSAGE_TYPES.CLOSE:
+          handleCloseWebView();
           break;
         default:
           break;
