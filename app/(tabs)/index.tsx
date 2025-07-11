@@ -20,9 +20,13 @@ import GameLoadedDialog from "../../components/GameLoadedDialog";
 import TopUpDialog from "../../components/TopUpDialog";
 
 const { width, height } = Dimensions.get("window");
-const WEBVIEW_RESOLUTION = { width: 930, height: 786 };
-const webViewHeight =
-  width / (WEBVIEW_RESOLUTION.width / WEBVIEW_RESOLUTION.height);
+// Calculate WebView height based on aspect ratio
+const calculateWebViewHeight = () => {
+  const aspectRatio = 386 / 852;
+  return height * aspectRatio;
+};
+
+const webViewHeight = calculateWebViewHeight();
 
 interface WebViewMessageEvent {
   nativeEvent: {
