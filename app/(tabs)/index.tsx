@@ -39,7 +39,8 @@ export default function App() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [gameUrl, setGameUrl] = useState("");
   const [isTopUpDialogVisible, setIsTopUpDialogVisible] = useState(false);
-  const [isGameLoadedDialogVisible, setIsGameLoadedDialogVisible] = useState(false);
+  const [isGameLoadedDialogVisible, setIsGameLoadedDialogVisible] =
+    useState(false);
 
   useEffect(() => {
     const hideNavigationBar = async () => {
@@ -161,88 +162,11 @@ export default function App() {
     </TouchableOpacity>
   );
 
-  const renderWebView = () => (
-    <WebView
-      style={styles.webView}
-      source={{ uri: gameUrl }}
-      // Prevent open new tab in android
-      setSupportMultipleWindows={false}
-      onMessage={handleWebViewMessage}
-    />
-  );
-
   const renderOpenButton = () => (
     <TouchableOpacity style={styles.openButton} onPress={handleOpenWebView}>
       <Text style={styles.buttonText}>Open Demo</Text>
     </TouchableOpacity>
   );
-
-  if (isWebViewVisible && !isMinimized) {
-    return (
-      <View style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor="transparent"
-          translucent={true}
-        />
-        <ImageBackground
-          source={require("../../assets/images/lang-live-demo-bg.webp")}
-          style={styles.container}
-          resizeMode="cover"
-        >
-          <View style={styles.overlayContainer}>
-            {renderCloseButton()}
-            {renderMinimizeButton()}
-            {renderWebView()}
-          </View>
-        </ImageBackground>
-
-        <TopUpDialog
-          visible={isTopUpDialogVisible}
-          onClose={handleCloseTopUpDialog}
-          onTopUp={handleTopUp}
-        />
-        <GameLoadedDialog
-          visible={isGameLoadedDialogVisible}
-          onClose={handleCloseGameLoadedDialog}
-        />
-      </View>
-    );
-  }
-
-  if (isWebViewVisible && isMinimized) {
-    return (
-      <View style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor="transparent"
-          translucent={true}
-        />
-        <ImageBackground
-          source={require("../../assets/images/lang-live-demo-bg.webp")}
-          style={styles.container}
-          resizeMode="cover"
-        >
-          <TouchableOpacity
-            style={styles.minimizedContainer}
-            onPress={handleMaximizeWebView}
-          >
-            <View style={styles.minimizedWebView}>{renderWebView()}</View>
-          </TouchableOpacity>
-        </ImageBackground>
-
-        <TopUpDialog
-          visible={isTopUpDialogVisible}
-          onClose={handleCloseTopUpDialog}
-          onTopUp={handleTopUp}
-        />
-        <GameLoadedDialog
-          visible={isGameLoadedDialogVisible}
-          onClose={handleCloseGameLoadedDialog}
-        />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -256,7 +180,32 @@ export default function App() {
         style={styles.container}
         resizeMode="cover"
       >
-        <View style={styles.openButtonContainer}>{renderOpenButton()}</View>
+        {isWebViewVisible && (
+          <View
+            style={
+              isMinimized ? styles.minimizedContainer : styles.overlayContainer
+            }
+          >
+            {!isMinimized && renderCloseButton()}
+            {!isMinimized && renderMinimizeButton()}
+            <TouchableOpacity
+              style={isMinimized ? styles.minimizedTouchable : styles.normalTouchable}
+              onPress={isMinimized ? handleMaximizeWebView : undefined}
+              activeOpacity={isMinimized ? 0.8 : 1}
+            >
+              <WebView
+                style={isMinimized ? styles.minimizedWebView : styles.webView}
+                source={{ uri: gameUrl }}
+                setSupportMultipleWindows={false}
+                onMessage={handleWebViewMessage}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {!isWebViewVisible && (
+          <View style={styles.openButtonContainer}>{renderOpenButton()}</View>
+        )}
       </ImageBackground>
 
       <TopUpDialog
@@ -380,5 +329,11 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     zIndex: 1000,
+  },
+  minimizedTouchable: {
+    flex: 1,
+  },
+  normalTouchable: {
+    flex: 1,
   },
 });
