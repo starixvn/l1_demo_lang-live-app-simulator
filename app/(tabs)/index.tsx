@@ -198,6 +198,9 @@ export default function App() {
                 source={{ uri: gameUrl }}
                 setSupportMultipleWindows={false}
                 onMessage={handleWebViewMessage}
+                scrollEnabled={true}
+                nestedScrollEnabled={true}
+                javaScriptEnabled={true}
               />
             </TouchableOpacity>
           </View>
