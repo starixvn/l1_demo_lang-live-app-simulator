@@ -192,7 +192,9 @@ export default function App() {
             {!isMinimized && renderCloseButton()}
             {!isMinimized && renderMinimizeButton()}
             <TouchableOpacity
-              style={isMinimized ? styles.minimizedTouchable : styles.normalTouchable}
+              style={
+                isMinimized ? styles.minimizedTouchable : styles.normalTouchable
+              }
               onPress={isMinimized ? handleMaximizeWebView : undefined}
               activeOpacity={isMinimized ? 0.8 : 1}
             >
@@ -204,6 +206,8 @@ export default function App() {
                 scrollEnabled={true}
                 nestedScrollEnabled={true}
                 javaScriptEnabled={true}
+                cacheEnabled={false}
+                cacheMode="LOAD_NO_CACHE"
               />
             </TouchableOpacity>
           </View>
