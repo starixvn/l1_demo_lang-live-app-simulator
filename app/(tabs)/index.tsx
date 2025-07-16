@@ -184,13 +184,19 @@ export default function App() {
         resizeMode="cover"
       >
         {isWebViewVisible && (
+          <>
+            {!isMinimized && renderCloseButton()}
+            {!isMinimized && renderMinimizeButton()}
+          </>
+        )}
+
+        {/* WebView Container */}
+        {isWebViewVisible && (
           <View
             style={
               isMinimized ? styles.minimizedContainer : styles.overlayContainer
             }
           >
-            {!isMinimized && renderCloseButton()}
-            {!isMinimized && renderMinimizeButton()}
             <TouchableOpacity
               style={
                 isMinimized ? styles.minimizedTouchable : styles.normalTouchable
@@ -262,14 +268,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
+    top: 0,
     bottom: 0,
-    height: webViewHeight,
+    height: "100%",
+    zIndex: 1,
   },
   closeButtonWrapper: {
     position: "absolute",
-    top: -35,
+    top: 300, 
     left: 16,
-    zIndex: 2,
+    zIndex: 1000, 
     width: 34,
     height: 34,
     borderRadius: 20,
@@ -295,9 +303,9 @@ const styles = StyleSheet.create({
   },
   minimizeButtonWrapper: {
     position: "absolute",
-    top: -35,
+    top: 300,
     right: 16,
-    zIndex: 2,
+    zIndex: 1000, // Higher z-index to stay on top
     width: 34,
     height: 34,
     borderRadius: 20,
